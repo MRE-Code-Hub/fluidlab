@@ -15,7 +15,7 @@ Provides:
 
 from fluidlab.interfaces import interface_from_string, FalseInterface, Interface
 from fluidlab.instruments.features import SuperValue
-
+import copy
 
 class Driver:
     """Instrument driver (base class).
@@ -54,9 +54,11 @@ class Driver:
         for name in dir(self):
             v = getattr(self, name)
             if isinstance(v, SuperValue):
+                v = copy.deepcopy(v)
                 self.values[name] = v
                 v._interface = self._interface
                 v._driver = self
+                setattr(self, name, v)
 
     def __setattr__(self, k, v):
         if (
